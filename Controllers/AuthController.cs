@@ -31,14 +31,12 @@ namespace CentWorkTimeTracker.Controllers
             ResponseModel<UserReadDto> responseModel = new ResponseModel<UserReadDto>();
             if (HttpContext.Session.Keys.Contains("userId"))
             {
-                responseModel.Ok = true;
                 responseModel.Data = await _userRepo.GetUserById(int.Parse(HttpContext.Session.GetString("userId")));
                 responseModel.Messages.Add("You Are authorized");
                 return Ok(responseModel);
             }
-            responseModel.Ok = false;
-            responseModel.Errors.Add("You Are not authorized");
-            return NotFound(responseModel);
+            responseModel.Messages.Add("You Are not authorized");
+            return Ok(responseModel);
         }
 
         [HttpPost]
@@ -81,8 +79,9 @@ namespace CentWorkTimeTracker.Controllers
 
         [HttpPost]
         [Route("register")]
-        public async Task<ActionResult<UserReadDto>> Register([FromBody] RegisterModel registerModel)
+        public async Task<ActionResult<UserReadDto>> Register(RegisterModel registerModel)
         {
+            var valid = ModelState.IsValid;
             ResponseModel<UserReadDto> responseModel = new ResponseModel<UserReadDto>();
             var candidate = await _userRepo.GetUserByEmail(registerModel.Email);
             if (candidate != null)

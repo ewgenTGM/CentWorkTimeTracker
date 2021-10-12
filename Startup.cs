@@ -26,6 +26,7 @@ namespace CentWorkTimeTracker
 
         public void ConfigureServices(IServiceCollection services)
         {
+            services.AddCors();
             services.AddDistributedMemoryCache();
             services.AddSession();
             services.AddAutoMapper(AppDomain.CurrentDomain.GetAssemblies());
@@ -42,7 +43,11 @@ namespace CentWorkTimeTracker
             {
                 app.UseDeveloperExceptionPage();
             }
-
+            app.UseCors(builder => builder
+            .SetIsOriginAllowed(origin => true)
+            .AllowAnyMethod()
+            .AllowAnyHeader()
+            .AllowCredentials());
             app.UseRouting();
             app.UseSession();
             app.UseEndpoints(endpoints =>
