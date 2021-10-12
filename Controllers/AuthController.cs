@@ -1,6 +1,8 @@
 ﻿using CentWorkTimeTracker.Dtos;
+using CentWorkTimeTracker.Helpers;
 using CentWorkTimeTracker.Models;
 using CentWorkTimeTracker.Services;
+using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using System;
 using System.Collections.Generic;
@@ -24,20 +26,73 @@ namespace CentWorkTimeTracker.Controllers
 
         [HttpGet]
         [Route("me")]
-        public ActionResult Get()
+        public async Task<ActionResult> Get()
         {
-            return Ok("Works, but we don't know hwo You are...");
+            ResponseModel<UserReadDto> responseModel = new ResponseModel<UserReadDto>();
+            if (HttpContext.Session.Keys.Contains("userId"))
+            {
+                responseModel.Ok = true;
+                responseModel.Data = await _userRepo.GetUserById(int.Parse(HttpContext.Session.GetString("userId")));
+                responseModel.Messages.Add("You Are authorized");
+                return Ok(responseModel);
+            }
+            responseModel.Ok = false;
+            responseModel.Errors.Add("You Are not authorized");
+            return NotFound(responseModel);
+        }
+
+        [HttpPost]
+        [Route("login")]
+        public async Task<ActionResult> Login(LoginModel loginModel)
+        {
+            ResponseModel<User> responseModel = new ResponseModel<User>();
+            User user = await _userRepo.GetUserByEmail(loginModel.Email);
+            if (user == null)
+            {
+                responseModel.Ok = false;
+                responseModel.Errors.Add("Bad email and/or password");
+                return BadRequest(responseModel);
+            }
+            if (!PasswordHelper.PasswordCompare(loginModel.Password, user.Password))
+            {
+                responseModel.Ok = false;
+                responseModel.Errors.Add("Bad email and/or password");
+                return BadRequest(responseModel);
+            }
+            Console.WriteLine(HttpContext.Session.Id);
+            responseModel.Data = user;
+            responseModel.Messages.Add("Login success");
+            responseModel.Messages.Add(HttpContext.Session.Id);
+            HttpContext.Session.SetString("userId", user.Id.ToString());
+            return Ok(responseModel);
+        }
+
+        [HttpDelete]
+        [Route("login")]
+        public ActionResult Login()
+        {
+            if (HttpContext.Session.Keys.Contains("userId"))
+            {
+                HttpContext.Session.Clear();
+                return Ok("Logout success");
+            }
+            return BadRequest("We are not knoew who You are");
         }
 
         [HttpPost]
         [Route("register")]
-        public async Task<ActionResult<UserReadDto>> Register([FromBody] UserAddDto user)
+        public async Task<ActionResult<UserReadDto>> Register([FromBody] RegisterModel registerModel)
         {
             ResponseModel<UserReadDto> responseModel = new ResponseModel<UserReadDto>();
-            if (!ModelState.IsValid)
+            var candidate = await _userRepo.GetUserByEmail(registerModel.Email);
+            if (candidate != null)
             {
+                responseModel.Ok = false;
+                responseModel.Errors.Add($"User with email {registerModel.Email} allready exist");
+                return BadRequest(responseModel);
             }
-            var newUser = await _userRepo.AddUser(user);
+            var newUser = await _userRepo.AddUser(registerModel);
+
             if (newUser == null)
             {
                 responseModel.Ok = false;

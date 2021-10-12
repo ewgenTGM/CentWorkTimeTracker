@@ -1,5 +1,6 @@
 ﻿using AutoMapper;
 using CentWorkTimeTracker.Dtos;
+using CentWorkTimeTracker.Helpers;
 using CentWorkTimeTracker.Models;
 using Microsoft.EntityFrameworkCore;
 using System;
@@ -20,12 +21,17 @@ namespace CentWorkTimeTracker.Services
             _mapper = mapper;
         }
 
-        public async Task<UserReadDto> AddUser(UserAddDto user)
+        public async Task<UserReadDto> AddUser(RegisterModel registerModel)
         {
-            var addedUser = await _db.Users.AddAsync(_mapper.Map<User>(user));
-            var mapped = _mapper.Map<UserReadDto>(addedUser);
-            await _db.SaveChangesAsync();
-            return mapped;
+            User userToAdd = _mapper.Map<User>(registerModel);
+            userToAdd.Password = PasswordHelper.GetHashedPassword(registerModel.Password);
+            await _db.Users.AddAsync(userToAdd);
+            int count = await _db.SaveChangesAsync();
+            if (count == 0)
+            {
+                return null;
+            }
+            return _mapper.Map<UserReadDto>(userToAdd);
         }
 
         public async Task<IEnumerable<UserReadDto>> GetAllUsers()
@@ -34,9 +40,16 @@ namespace CentWorkTimeTracker.Services
             return _mapper.Map<IEnumerable<UserReadDto>>(users);
         }
 
+        public async Task<User> GetUserByEmail(string email)
+        {
+            var user = await _db.Users.FirstOrDefaultAsync(user => user.Email.ToLower() == email.ToLower());
+            return user;
+        }
+
         public async Task<UserReadDto> GetUserById(int id)
         {
-            throw new NotImplementedException();
+            var user = await _db.Users.FirstOrDefaultAsync(user => user.Id == id);
+            return _mapper.Map<UserReadDto>(user);
         }
     }
 }

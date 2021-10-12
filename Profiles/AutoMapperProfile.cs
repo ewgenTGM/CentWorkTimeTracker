@@ -13,7 +13,7 @@ namespace CentWorkTimeTracker.Profiles
         public AutoMapperProfile()
         {
             CreateMap<User, UserReadDto>();
-            CreateMap<UserAddDto, User>();
+            CreateMap<RegisterModel, User>();
         }
     }
 }

@@ -11,8 +11,10 @@ namespace CentWorkTimeTracker.Services
     {
         Task<UserReadDto> GetUserById(int id);
 
+        Task<User> GetUserByEmail(string email);
+
         Task<IEnumerable<UserReadDto>> GetAllUsers();
 
-        Task<UserReadDto> AddUser(UserAddDto user);
+        Task<UserReadDto> AddUser(RegisterModel user);
     }
 }

@@ -26,6 +26,8 @@ namespace CentWorkTimeTracker
 
         public void ConfigureServices(IServiceCollection services)
         {
+            services.AddDistributedMemoryCache();
+            services.AddSession();
             services.AddAutoMapper(AppDomain.CurrentDomain.GetAssemblies());
             services.AddTransient<IEmailService, FakeEmailService>();
             services.AddTransient<IUserRepository, UserDbRepository>();
@@ -42,9 +44,7 @@ namespace CentWorkTimeTracker
             }
 
             app.UseRouting();
-
-            //app.UseAuthorization();
-
+            app.UseSession();
             app.UseEndpoints(endpoints =>
             {
                 endpoints.MapControllers();

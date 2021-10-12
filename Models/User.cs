@@ -8,8 +8,8 @@ namespace CentWorkTimeTracker.Models
 {
     public enum UserTypes
     {
-        User,
-        Manager
+        User = 0,
+        Manager = 100
     }
 
     public class User
