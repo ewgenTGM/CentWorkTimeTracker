@@ -31,5 +31,8 @@ namespace CentWorkTimeTracker.Models
         public string Password { get; set; }
 
         public UserTypes UserType { get; set; } = UserTypes.User;
+        public List<Sick> Sicks { get; set; }
+        public List<Transfer> Transfers { get; set; }
+        public List<Vacation> Vacations { get; set; }
     }
 }

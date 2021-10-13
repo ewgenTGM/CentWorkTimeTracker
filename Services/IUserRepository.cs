@@ -9,12 +9,12 @@ namespace CentWorkTimeTracker.Services
 {
     public interface IUserRepository
     {
-        Task<UserReadDto> GetUserById(int id);
+        Task<User> GetUserById(int id);
 
         Task<User> GetUserByEmail(string email);
 
-        Task<IEnumerable<UserReadDto>> GetAllUsers();
+        Task<IEnumerable<User>> GetAllUsers();
 
-        Task<UserReadDto> AddUser(RegisterModel user);
+        Task<User> AddUser(RegisterModel user);
     }
 }

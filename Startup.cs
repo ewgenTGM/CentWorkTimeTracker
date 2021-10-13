@@ -1,3 +1,4 @@
+using CentWorkTimeTracker.Middleware;
 using CentWorkTimeTracker.Models;
 using CentWorkTimeTracker.Services;
 using Microsoft.AspNetCore.Builder;
@@ -26,6 +27,8 @@ namespace CentWorkTimeTracker
 
         public void ConfigureServices(IServiceCollection services)
         {
+            string dbConnection = Configuration.GetConnectionString("TrackerConnection");
+            services.AddDbContext<AppDbContext>(opt => opt.UseSqlServer(dbConnection));
             services.AddCors();
             services.AddDistributedMemoryCache();
             services.AddSession();
@@ -33,8 +36,6 @@ namespace CentWorkTimeTracker
             services.AddTransient<IEmailService, FakeEmailService>();
             services.AddTransient<IUserRepository, UserDbRepository>();
             services.AddControllers();
-            string dbConnection = Configuration.GetConnectionString("TrackerConnection");
-            services.AddDbContext<AppDbContext>(opt => opt.UseSqlServer(dbConnection));
         }
 
         public void Configure(IApplicationBuilder app, IWebHostEnvironment env)
@@ -50,6 +51,7 @@ namespace CentWorkTimeTracker
             .AllowCredentials());
             app.UseRouting();
             app.UseSession();
+            //app.UseMiddleware<ManagerAccessMiddleware>();
             app.UseEndpoints(endpoints =>
             {
                 endpoints.MapControllers();
