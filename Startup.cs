@@ -35,7 +35,9 @@ namespace CentWorkTimeTracker
             services.AddAutoMapper(AppDomain.CurrentDomain.GetAssemblies());
             services.AddTransient<IEmailService, FakeEmailService>();
             services.AddTransient<IUserRepository, UserDbRepository>();
-            services.AddControllers();
+            services.AddTransient<IClaimsRepository, ClaimDbRepository>();
+            services.AddControllers()
+                .AddNewtonsoftJson(opt => opt.SerializerSettings.ReferenceLoopHandling = Newtonsoft.Json.ReferenceLoopHandling.Ignore);
         }
 
         public void Configure(IApplicationBuilder app, IWebHostEnvironment env)

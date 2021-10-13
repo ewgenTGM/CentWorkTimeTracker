@@ -1,8 +1,7 @@
-﻿using System;
+﻿using Newtonsoft.Json;
+using System;
 using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
-using System.Linq;
-using System.Threading.Tasks;
 
 namespace CentWorkTimeTracker.Models
 {
@@ -28,11 +27,13 @@ namespace CentWorkTimeTracker.Models
 
         [Required]
         [MinLength(8)]
+        [JsonIgnore]
         public string Password { get; set; }
 
+        [JsonIgnore]
         public UserTypes UserType { get; set; } = UserTypes.User;
-        public List<Sick> Sicks { get; set; }
-        public List<Transfer> Transfers { get; set; }
-        public List<Vacation> Vacations { get; set; }
+
+        [JsonIgnore]
+        public List<Claim> Claims { get; set; }
     }
 }

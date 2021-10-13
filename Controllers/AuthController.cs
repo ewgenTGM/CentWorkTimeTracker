@@ -33,7 +33,7 @@ namespace CentWorkTimeTracker.Controllers
         {
             if (!HttpContext.Session.Keys.Contains("userId"))
             {
-                return new NotFoundObjectResult(new { Message = "You are not authorized" });
+                return Unauthorized(new { Message = "You are not authorized" });
             }
             var user = await _userRepo.GetUserById(HttpContext.Session.GetInt32("userId").Value);
             return Ok(_mapper.Map<UserReadDto>(user));
