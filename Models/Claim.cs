@@ -1,17 +1,9 @@
 ﻿using System;
 using System.ComponentModel.DataAnnotations;
+using System.ComponentModel.DataAnnotations.Schema;
 
 namespace CentWorkTimeTracker.Models
 {
-    public enum ClaimType
-    {
-        Vacation,
-        UnpaidedVacation,
-        Sick,
-        SickDays,
-        Transfer
-    }
-
     public enum ClaimStatus
     {
         Approved,
@@ -24,16 +16,7 @@ namespace CentWorkTimeTracker.Models
         [Key]
         public int Id { get; set; }
 
-        [Required]
-        public ClaimType Type { get; set; }
-
-        [Required]
-        public DateTime From { get; set; }
-
-        [Required]
-        public DateTime To { get; set; }
-
-        public string Description { get; set; }
+        public string Discriminator { get; set; }
 
         [Required]
         public int UserId { get; set; }

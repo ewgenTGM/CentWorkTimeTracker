@@ -6,14 +6,18 @@ namespace CentWorkTimeTracker.Services
 {
     public interface IClaimsRepository
     {
-        Task<Claim> AddClaim(Claim claim);
+        Task<T> AddClaim<T>(T claim) where T : Claim;
 
         Task<Claim> SetClaimStatus(int claimId, ClaimStatus claimStatus);
 
-        IEnumerable<Claim> GetAllClaimsByUserId(int userId);
+        List<Claim> GetAllClaimsByUserId(int userId);
 
         Task<Claim> GetClaimById(int claimId);
 
         List<Claim> GetAllInProgressClaim();
+
+        List<Claim> GetAllApprovedClaim();
+
+        List<Claim> GetAllRejectedClaim();
     }
 }

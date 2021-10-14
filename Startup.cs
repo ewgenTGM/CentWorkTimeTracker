@@ -53,7 +53,7 @@ namespace CentWorkTimeTracker
             .AllowCredentials());
             app.UseRouting();
             app.UseSession();
-            //app.UseMiddleware<ManagerAccessMiddleware>();
+            //app.UseMiddleware<ClaimRouteProtectionMiddleware>();
             app.UseEndpoints(endpoints =>
             {
                 endpoints.MapControllers();

@@ -41,7 +41,7 @@ namespace CentWorkTimeTracker.Controllers
 
         [HttpPost]
         [Route("login")]
-        public async Task<ActionResult> Login(LoginModel loginModel)
+        public async Task<ActionResult> Login([FromBody] LoginModel loginModel)
         {
             User user = await _userRepo.GetUserByEmail(loginModel.Email);
             if (user == null)
@@ -67,7 +67,7 @@ namespace CentWorkTimeTracker.Controllers
 
         [HttpPost]
         [Route("register")]
-        public async Task<ActionResult> Register(RegisterModel registerModel)
+        public async Task<ActionResult> Register([FromBody] RegisterModel registerModel)
         {
             var candidate = await _userRepo.GetUserByEmail(registerModel.Email);
             if (candidate != null)

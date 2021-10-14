@@ -32,63 +32,68 @@ namespace CentWorkTimeTracker.Models
                 Password = "$2a$11$eCdOfxMCJCVOE3lT9j4zqeuTy732ixBNV1FtvzNVr0AcHZ66TkTMm"
             };
 
-            Claim vacation = new Claim()
+            Vacation vacation = new Vacation()
             {
                 Id = 1,
                 UserId = 2,
-                From = new DateTime(2021, 01, 01),
-                To = new DateTime(2021, 01, 15),
-                Type = ClaimType.Vacation,
-                Description = "Поеду на море"
+                DateBegin = new DateTime(2021, 01, 01),
+                DateEnd = new DateTime(2021, 01, 15),
             };
 
-            Claim unpaidedVacation = new Claim()
+            UnpaidedVacation unpaidedVacation = new UnpaidedVacation()
             {
                 Id = 2,
                 UserId = 2,
-                From = new DateTime(2021, 01, 01),
-                To = new DateTime(2021, 01, 15),
-                Type = ClaimType.Vacation,
+                DateBegin = new DateTime(2021, 01, 01),
+                DateEnd = new DateTime(2021, 01, 15),
                 Description = "Нужно закопать тело в лесу"
             };
 
-            Claim sick = new Claim()
+            Sick sick = new Sick()
             {
                 Id = 3,
                 UserId = 2,
-                From = new DateTime(2021, 01, 01),
-                To = new DateTime(2021, 01, 15),
-                Type = ClaimType.Sick,
-                Description = "Зобелел волчанкой, справка есть"
+                DateBegin = new DateTime(2021, 01, 01),
+                DateEnd = new DateTime(2021, 01, 15),
+                DocNumber = "БН12321"
             };
+            sick.Approve();
 
-            Claim sickDays = new Claim()
+            SickDays sickDays = new SickDays()
             {
                 Id = 4,
                 UserId = 2,
-                From = new DateTime(2021, 01, 01),
-                To = new DateTime(2021, 01, 15),
-                Type = ClaimType.SickDays,
-                Description = "Отморозил нос"
+                DateBegin = new DateTime(2021, 01, 01),
+                DateEnd = new DateTime(2021, 01, 15),
+                Description = "Болят волосы"
             };
 
-            Claim transfer = new Claim()
+            Transfer transfer = new Transfer()
             {
                 Id = 5,
                 UserId = 2,
-                From = new DateTime(2021, 10, 11),
-                To = new DateTime(2021, 10, 16),
-                Type = ClaimType.Transfer,
+                DayFrom = new DateTime(2021, 10, 11),
+                DayTo = new DateTime(2021, 10, 16),
                 Description = "Пойду по бабам, " +
                 "отработа" +
                 "ю в субботу без баб"
             };
+            transfer.Reject();
 
             modelBuilder.Entity<User>().HasData(new[] { manager, user });
-            modelBuilder.Entity<Claim>().HasData(new[] { vacation, unpaidedVacation, sick, sickDays, transfer });
+            modelBuilder.Entity<Vacation>().HasData(vacation);
+            modelBuilder.Entity<Sick>().HasData(sick);
+            modelBuilder.Entity<SickDays>().HasData(sickDays);
+            modelBuilder.Entity<Transfer>().HasData(transfer);
+            modelBuilder.Entity<UnpaidedVacation>().HasData(unpaidedVacation);
         }
 
         public DbSet<User> Users { get; set; }
         public DbSet<Claim> Claims { get; set; }
+        public DbSet<Vacation> Vacations { get; set; }
+        public DbSet<Sick> Sicks { get; set; }
+        public DbSet<SickDays> SickDays { get; set; }
+        public DbSet<Transfer> Transfers { get; set; }
+        public DbSet<UnpaidedVacation> UnpaidedVacations { get; set; }
     }
 }
