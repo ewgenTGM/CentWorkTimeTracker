@@ -11,7 +11,7 @@ namespace CentWorkTimeTracker.Models
         InProgress
     }
 
-    public class Claim
+    public abstract class Claim
     {
         [Key]
         public int Id { get; set; }
@@ -24,6 +24,8 @@ namespace CentWorkTimeTracker.Models
         public User User { get; set; }
 
         public ClaimStatus ClaimStatus { get; private set; } = ClaimStatus.InProgress;
+
+        public abstract int GetDayCount();
 
         public void Approve()
         {

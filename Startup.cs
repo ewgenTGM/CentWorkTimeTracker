@@ -33,6 +33,7 @@ namespace CentWorkTimeTracker
             services.AddDistributedMemoryCache();
             services.AddSession();
             services.AddTransient<IEmailService, FakeEmailService>();
+            services.AddTransient<UserStatisticService>();
             services.AddTransient<IUserRepository, UserDbRepository>();
             services.AddTransient<IClaimsRepository, ClaimDbRepository>();
             services.AddControllers()

@@ -18,5 +18,7 @@ namespace CentWorkTimeTracker.Models
         public DateTime DayTo { get; set; }
 
         public string Description { get; set; }
+
+        public override int GetDayCount() => 1;
     }
 }

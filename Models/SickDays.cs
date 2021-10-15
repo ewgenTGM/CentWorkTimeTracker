@@ -17,5 +17,7 @@ namespace CentWorkTimeTracker.Models
 
         [Required]
         public string Description { get; set; }
+
+        public override int GetDayCount() => (DateEnd - DateBegin).Days + 1;
     }
 }

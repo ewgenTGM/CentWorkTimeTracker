@@ -14,5 +14,7 @@ namespace CentWorkTimeTracker.Models
         {
             Approve();
         }
+
+        public override int GetDayCount() => 1;
     }
 }
