@@ -18,13 +18,11 @@ namespace CentWorkTimeTracker.Controllers
     {
         private readonly IUserRepository _userRepo;
         private readonly IEmailService _emailService;
-        private readonly IMapper _mapper;
 
-        public AuthController(IUserRepository userRepository, IEmailService emailService, IMapper mapper)
+        public AuthController(IUserRepository userRepository, IEmailService emailService)
         {
             _userRepo = userRepository;
             _emailService = emailService;
-            _mapper = mapper;
         }
 
         [HttpGet]
@@ -36,7 +34,7 @@ namespace CentWorkTimeTracker.Controllers
                 return Unauthorized(new { Message = "You are not authorized" });
             }
             var user = await _userRepo.GetUserById(HttpContext.Session.GetInt32("userId").Value);
-            return Ok(_mapper.Map<UserReadDto>(user));
+            return Ok(new { name = user.Name, email = user.Email, userType = user.UserType });
         }
 
         [HttpPost]
@@ -54,7 +52,7 @@ namespace CentWorkTimeTracker.Controllers
             }
             HttpContext.Session.SetInt32("userId", user.Id);
             HttpContext.Session.SetInt32("userRole", (int)user.UserType);
-            return Ok(_mapper.Map<UserReadDto>(user));
+            return Ok(new { name = user.Name, email = user.Email, userType = user.UserType });
         }
 
         [HttpDelete]
@@ -74,14 +72,14 @@ namespace CentWorkTimeTracker.Controllers
             {
                 return new BadRequestObjectResult(new { Message = "User allready exist" });
             }
-            var newUser = await _userRepo.AddUser(registerModel);
+            var user = await _userRepo.AddUser(registerModel);
 
-            if (newUser == null)
+            if (user == null)
             {
                 return new BadRequestObjectResult(new { Message = "Something went wrong((" });
             }
-            _emailService.sendMessage(new System.Net.Mail.MailMessage());
-            return Ok(_mapper.Map<UserReadDto>(newUser));
+            _emailService.sendRegisterEmail(user);
+            return Ok(new { name = user.Name, email = user.Email, userType = user.UserType });
         }
     }
 }

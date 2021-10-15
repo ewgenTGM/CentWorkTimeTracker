@@ -6,14 +6,9 @@ using System.Threading.Tasks;
 
 namespace CentWorkTimeTracker.Models
 {
-    public class AddSickModel
+    public class AddWorkFromHomeModel
     {
         [Required]
-        public DateTime DateBegin { get; set; }
-
-        [Required]
-        public DateTime DateEnd { get; set; }
-
-        public string DocNumber { get; set; }
+        public DateTime Date { get; set; }
     }
 }

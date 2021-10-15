@@ -68,7 +68,7 @@ namespace CentWorkTimeTracker.Services
         // Для менеджера, установка статуса заявки
         public async Task<Claim> SetClaimStatus(int claimId, ClaimStatus claimStatus)
         {
-            var claim = await _db.Claims.FirstOrDefaultAsync(claim => claim.Id == claimId);
+            var claim = await _db.Claims.Include(c => c.User).SingleOrDefaultAsync(claim => claim.Id == claimId);
             if (claim == null)
             {
                 return null;

@@ -94,6 +94,7 @@ namespace CentWorkTimeTracker.Models
         public DbSet<Sick> Sicks { get; set; }
         public DbSet<SickDays> SickDays { get; set; }
         public DbSet<Transfer> Transfers { get; set; }
+        public DbSet<WorkFromHome> WorkFromHomes { get; set; }
         public DbSet<UnpaidedVacation> UnpaidedVacations { get; set; }
     }
 }

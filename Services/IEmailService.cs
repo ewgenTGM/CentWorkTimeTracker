@@ -12,5 +12,7 @@ namespace CentWorkTimeTracker.Services
         bool sendMessageToManager<T>(T claim) where T : Claim;
 
         bool sendMessageToUser<T>(T claim) where T : Claim;
+
+        bool sendRegisterEmail(User user);
     }
 }

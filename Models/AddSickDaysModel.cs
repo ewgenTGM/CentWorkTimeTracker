@@ -14,7 +14,6 @@ namespace CentWorkTimeTracker.Models
         [Required]
         public DateTime DateEnd { get; set; }
 
-        [Required]
         public string Description { get; set; }
     }
 }

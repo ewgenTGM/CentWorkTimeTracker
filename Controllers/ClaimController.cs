@@ -172,7 +172,23 @@ namespace CentWorkTimeTracker.Controllers
             return Ok(added);
         }
 
+        [HttpPost]
+        [Route("add/wfh")]
+        public async Task<ActionResult> AddWorkFromHome([FromBody] AddWorkFromHomeModel model)
+        {
+            int userId = HttpContext.Session.GetInt32("userId").Value;
+            WorkFromHome wfh = new WorkFromHome()
+            {
+                UserId = userId,
+                Date = model.Date
+            };
+            var added = await _claimsRepo.AddClaim(wfh);
+            _emailService.sendMessageToManager(added);
+            return Ok(added);
+        }
+
         [HttpGet("approve/{id}")]
+        //todo добавить проверку на тип пользователя
         public async Task<ActionResult> ApproveClaim(int id)
         {
             var claim = await _claimsRepo.SetClaimStatus(id, ClaimStatus.Approved);
@@ -185,6 +201,7 @@ namespace CentWorkTimeTracker.Controllers
         }
 
         [HttpGet("reject/{id}")]
+        //todo добавить проверку на тип пользователя
         public async Task<ActionResult> RejectClaim(int id)
         {
             var claim = await _claimsRepo.SetClaimStatus(id, ClaimStatus.Rejected);
