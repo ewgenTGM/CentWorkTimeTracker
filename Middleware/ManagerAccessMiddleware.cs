@@ -17,7 +17,7 @@ namespace CentWorkTimeTracker.Middleware
 
         public async Task InvokeAsync(HttpContext context)
         {
-            if (context.Session.GetInt32("userRole") != 100 && context.Request.Path == "/api/auth/login" && context.Request.Method == "DELETE")
+            if (context.Session.GetInt32("userRole") != 100 && (context.Request.Path.ToString().Contains("approve") || context.Request.Path.ToString().Contains("reject")))
             {
                 context.Response.StatusCode = 403;
                 await context.Response.WriteAsync("No access");
