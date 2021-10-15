@@ -32,7 +32,6 @@ namespace CentWorkTimeTracker
             services.AddCors();
             services.AddDistributedMemoryCache();
             services.AddSession();
-            services.AddAutoMapper(AppDomain.CurrentDomain.GetAssemblies());
             services.AddTransient<IEmailService, FakeEmailService>();
             services.AddTransient<IUserRepository, UserDbRepository>();
             services.AddTransient<IClaimsRepository, ClaimDbRepository>();

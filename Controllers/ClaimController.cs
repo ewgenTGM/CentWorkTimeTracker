@@ -14,10 +14,28 @@ namespace CentWorkTimeTracker.Controllers
     public class ClaimController : Controller
     {
         private readonly IClaimsRepository _claimsRepo;
+        private readonly IEmailService _emailService;
 
-        public ClaimController(IClaimsRepository claimsRepo)
+        public ClaimController(IClaimsRepository claimsRepo, IEmailService emailService)
         {
             _claimsRepo = claimsRepo;
+            _emailService = emailService;
+        }
+
+        [HttpGet]
+        public ActionResult Get()
+        {
+            if (!HttpContext.Session.GetInt32("userId").HasValue)
+            {
+                return Unauthorized();
+            }
+            int userId = HttpContext.Session.GetInt32("userId").Value;
+            var claims = _claimsRepo.GetAllClaimsByUserId(userId);
+            if (claims.Count == 0)
+            {
+                return NoContent();
+            }
+            return Ok(claims);
         }
 
         [HttpGet("{id}")]
@@ -74,6 +92,7 @@ namespace CentWorkTimeTracker.Controllers
                 DateEnd = model.DateEnd
             };
             var added = await _claimsRepo.AddClaim(vacation);
+            _emailService.sendMessageToManager(added);
             return Ok(added);
         }
 
@@ -90,6 +109,7 @@ namespace CentWorkTimeTracker.Controllers
                 Description = model.Description
             };
             var added = await _claimsRepo.AddClaim(unpaidedVacation);
+            _emailService.sendMessageToManager(added);
             return Ok(added);
         }
 
@@ -106,6 +126,7 @@ namespace CentWorkTimeTracker.Controllers
                 DocNumber = model.DocNumber
             };
             var added = await _claimsRepo.AddClaim(sick);
+            _emailService.sendMessageToManager(added);
             return Ok(added);
         }
 
@@ -122,6 +143,7 @@ namespace CentWorkTimeTracker.Controllers
                 Description = model.Description
             };
             var added = await _claimsRepo.AddClaim(sickDays);
+            _emailService.sendMessageToManager(added);
             return Ok(added);
         }
 
@@ -146,6 +168,7 @@ namespace CentWorkTimeTracker.Controllers
                 Description = model.Description
             };
             var added = await _claimsRepo.AddClaim(transfer);
+            _emailService.sendMessageToManager(added);
             return Ok(added);
         }
 
@@ -157,6 +180,7 @@ namespace CentWorkTimeTracker.Controllers
             {
                 return NotFound();
             }
+            _emailService.sendMessageToUser(claim);
             return Ok(claim);
         }
 
@@ -168,6 +192,7 @@ namespace CentWorkTimeTracker.Controllers
             {
                 return NotFound();
             }
+            _emailService.sendMessageToUser(claim);
             return Ok(claim);
         }
     }

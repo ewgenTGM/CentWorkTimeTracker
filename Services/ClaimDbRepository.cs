@@ -93,7 +93,7 @@ namespace CentWorkTimeTracker.Services
 
         List<Claim> IClaimsRepository.GetAllClaimsByUserId(int userId)
         {
-            var claims = _db.Claims.Where(c => c.UserId == userId).ToList();
+            var claims = _db.Claims.Where(c => c.UserId == userId).Include(c => c.User).ToList();
             return claims;
         }
     }

@@ -80,7 +80,7 @@ namespace CentWorkTimeTracker.Controllers
             {
                 return new BadRequestObjectResult(new { Message = "Something went wrong((" });
             }
-            await _emailService.sendMessage(new System.Net.Mail.MailMessage());
+            _emailService.sendMessage(new System.Net.Mail.MailMessage());
             return Ok(_mapper.Map<UserReadDto>(newUser));
         }
     }
