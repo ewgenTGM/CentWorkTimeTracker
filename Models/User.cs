@@ -16,17 +16,10 @@ namespace CentWorkTimeTracker.Models
         [Key]
         public int Id { get; set; }
 
-        [Required]
-        [MinLength(4)]
-        [MaxLength(20)]
         public string Name { get; set; }
 
-        [Required]
-        [DataType(DataType.EmailAddress, ErrorMessage = "Invalid email format")]
         public string Email { get; set; }
 
-        [Required]
-        [MinLength(8)]
         [JsonIgnore]
         public string Password { get; set; }
 

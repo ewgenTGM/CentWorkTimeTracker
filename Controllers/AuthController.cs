@@ -7,6 +7,7 @@ using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using System;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.Linq;
 using System.Threading.Tasks;
 
@@ -44,11 +45,11 @@ namespace CentWorkTimeTracker.Controllers
             User user = await _userRepo.GetUserByEmail(loginModel.Email);
             if (user == null)
             {
-                return BadRequest(new { Message = "Bad login/password" });
+                return BadRequest(new { Message = "Bad login or password" });
             }
             if (!PasswordHelper.PasswordCompare(loginModel.Password, user.Password))
             {
-                return BadRequest(new { Message = "Bad login/password" });
+                return BadRequest(new { Message = "Bad login or password" });
             }
             HttpContext.Session.SetInt32("userId", user.Id);
             HttpContext.Session.SetInt32("userRole", (int)user.UserType);
@@ -67,16 +68,21 @@ namespace CentWorkTimeTracker.Controllers
         [Route("register")]
         public async Task<ActionResult> Register([FromBody] RegisterModel registerModel)
         {
+
+            if (!registerModel.Email.EndsWith("@centoria.io"))
+            {
+                return BadRequest(new {Message = "Email address must be in @centoria.io domain."});
+            }
             var candidate = await _userRepo.GetUserByEmail(registerModel.Email);
             if (candidate != null)
             {
-                return new BadRequestObjectResult(new { Message = "User allready exist" });
+                return BadRequest(new { Message = "User allready exist" });
             }
             var user = await _userRepo.AddUser(registerModel);
 
             if (user == null)
             {
-                return new BadRequestObjectResult(new { Message = "Something went wrong((" });
+                return BadRequest(new { Message = "Something went wrong((" });
             }
             _emailService.sendRegisterEmail(user);
             return Ok(new { name = user.Name, email = user.Email, userType = user.UserType });

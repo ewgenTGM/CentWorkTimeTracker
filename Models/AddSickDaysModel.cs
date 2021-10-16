@@ -13,7 +13,8 @@ namespace CentWorkTimeTracker.Models
 
         [Required]
         public DateTime DateEnd { get; set; }
-
+        
+        [StringLength(maximumLength: 50, MinimumLength = 5)]
         public string Description { get; set; }
     }
 }

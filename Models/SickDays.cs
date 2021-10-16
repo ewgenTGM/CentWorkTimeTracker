@@ -9,15 +9,16 @@ namespace CentWorkTimeTracker.Models
     //Модель больничного без справки
     public class SickDays : Claim
     {
-        [Required]
         public DateTime DateBegin { get; set; }
 
-        [Required]
         public DateTime DateEnd { get; set; }
 
-        [Required]
         public string Description { get; set; }
 
         public override int GetDayCount() => (DateEnd - DateBegin).Days + 1;
+        public SickDays()
+        {
+            Approve();
+        }
     }
 }

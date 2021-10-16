@@ -8,10 +8,8 @@ namespace CentWorkTimeTracker.Models
 {
     public class UnpaidedVacation : Claim
     {
-        [Required]
         public DateTime DateBegin { get; set; }
 
-        [Required]
         public DateTime DateEnd { get; set; }
 
         public string Description { get; set; }

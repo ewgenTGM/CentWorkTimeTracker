@@ -14,18 +14,24 @@ namespace CentWorkTimeTracker.Services
             _claimsRepository = claimsRepository;
         }
 
-        public int GetDaysCountByUserid(int userId, string discriminator)
+        public int GetDaysCountByUserid(int userId, string discriminator, bool includeInPropgressClaims = false)
         {
             int daysCount = 0;
-            var sicks = _claimsRepository.GetAllApprovedClaim().Where(s => s.Discriminator == discriminator && s.UserId == userId).ToList();
-            if (sicks.Count != 0)
+            var claims = _claimsRepository.GetAllApprovedClaim().Where(s => s.Discriminator == discriminator && s.UserId == userId).ToList();
+            if (includeInPropgressClaims)
             {
-                foreach (var sick in sicks)
+                claims.AddRange(_claimsRepository.GetAllInProgressClaim().Where(s => s.Discriminator == discriminator && s.UserId == userId).ToList());
+            }
+            if (claims.Count != 0)
+            {
+                foreach (var sick in claims)
                 {
                     daysCount += sick.GetDayCount();
                 }
             }
             return daysCount;
         }
+
+
     }
 }

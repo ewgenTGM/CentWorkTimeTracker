@@ -8,15 +8,17 @@ namespace CentWorkTimeTracker.Models
 {
     public class Sick : Claim
     {
-        [Required]
+
         public DateTime DateBegin { get; set; }
 
-        [Required]
         public DateTime DateEnd { get; set; }
 
-        [Required]
         public string DocNumber { get; set; }
 
         public override int GetDayCount() => (DateEnd - DateBegin).Days + 1;
+        public Sick()
+        {
+            Approve();
+        }
     }
 }
