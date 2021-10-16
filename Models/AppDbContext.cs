@@ -89,7 +89,7 @@ namespace CentWorkTimeTracker.Models
         }
 
         public DbSet<User> Users { get; set; }
-        public DbSet<Claim> Claims { get; set; }
+        public DbSet<Request> Requests { get; set; }
         public DbSet<Vacation> Vacations { get; set; }
         public DbSet<Sick> Sicks { get; set; }
         public DbSet<SickDays> SickDays { get; set; }

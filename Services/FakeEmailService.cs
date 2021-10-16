@@ -16,18 +16,17 @@ namespace CentWorkTimeTracker.Services
             _userRepo = userRepository;
         }
 
-        public bool sendMessageToManager<T>(T claim) where T : Claim
-        {
-            User user = _userRepo.GetUserById(claim.UserId).Result;
-            Console.WriteLine($"Send mail to manager {claim.User.Name} <{claim.User.Email}>");
-            Console.WriteLine(claim.ToString());
+        public bool sendMessageToManager<T>(T request) where T : Request
+        {            
+            Console.WriteLine($"Send mail to manager {request.User.Name} <{request.User.Email}>");
+            Console.WriteLine(request.ToString());
             return true;
         }
 
-        public bool sendMessageToUser<T>(T claim) where T : Claim
+        public bool sendMessageToUser<T>(T request) where T : Request
         {
-            Console.WriteLine($"Send mail to user {claim.User.Name} <{claim.User.Email}>");
-            Console.WriteLine(claim.ToString());
+            Console.WriteLine($"Send mail to user {request.User.Name} <{request.User.Email}>");
+            Console.WriteLine(request.ToString());
             return true;
         }
 

@@ -35,7 +35,7 @@ namespace CentWorkTimeTracker
             services.AddTransient<IEmailService, FakeEmailService>();
             services.AddTransient<UserStatisticService>();
             services.AddTransient<IUserRepository, UserDbRepository>();
-            services.AddTransient<IClaimsRepository, ClaimDbRepository>();
+            services.AddTransient<IRequestRepository, RequestDbRepository>();
             services.AddControllers()
                 .AddNewtonsoftJson(opt => opt.SerializerSettings.ReferenceLoopHandling = Newtonsoft.Json.ReferenceLoopHandling.Ignore);
         }

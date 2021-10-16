@@ -7,7 +7,7 @@ using System.Threading.Tasks;
 namespace CentWorkTimeTracker.Models
 {
     //Модель переноса рабочего дня
-    public class Transfer : Claim
+    public class Transfer : Request
     {
         public DateTime DayFrom { get; set; }
 

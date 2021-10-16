@@ -6,7 +6,7 @@ using System.Threading.Tasks;
 
 namespace CentWorkTimeTracker.Models
 {
-    public class Sick : Claim
+    public class Sick : Request
     {
 
         public DateTime DateBegin { get; set; }

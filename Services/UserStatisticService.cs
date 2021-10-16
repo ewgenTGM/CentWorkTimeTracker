@@ -7,26 +7,26 @@ namespace CentWorkTimeTracker.Services
 {
     public class UserStatisticService
     {
-        private readonly IClaimsRepository _claimsRepository;
+        private readonly IRequestRepository _requestsRepository;
 
-        public UserStatisticService(IClaimsRepository claimsRepository)
+        public UserStatisticService(IRequestRepository requestsRepository)
         {
-            _claimsRepository = claimsRepository;
+            _requestsRepository = requestsRepository;
         }
 
-        public int GetDaysCountByUserid(int userId, string discriminator, bool includeInPropgressClaims = false)
+        public int GetDaysCountByUserid(int userId, string discriminator, bool includeInPropgressRequests = false)
         {
             int daysCount = 0;
-            var claims = _claimsRepository.GetAllApprovedClaim().Where(s => s.Discriminator == discriminator && s.UserId == userId).ToList();
-            if (includeInPropgressClaims)
+            var requests = _requestsRepository.GetAllApprovedRequests().Where(s => s.Discriminator == discriminator && s.UserId == userId).ToList();
+            if (includeInPropgressRequests)
             {
-                claims.AddRange(_claimsRepository.GetAllInProgressClaim().Where(s => s.Discriminator == discriminator && s.UserId == userId).ToList());
+                requests.AddRange(_requestsRepository.GetAllInProgressRequests().Where(s => s.Discriminator == discriminator && s.UserId == userId).ToList());
             }
-            if (claims.Count != 0)
+            if (requests.Count != 0)
             {
-                foreach (var sick in claims)
+                foreach (var request in requests)
                 {
-                    daysCount += sick.GetDayCount();
+                    daysCount += request.GetDayCount();
                 }
             }
             return daysCount;

@@ -11,15 +11,15 @@ namespace CentWorkTimeTracker.Controllers
 {
     [ApiController]
     [Route("api/[controller]")]
-    public class ClaimController : Controller
+    public class RequestController : Controller
     {
-        private readonly IClaimsRepository _claimsRepo;
+        private readonly IRequestRepository _requestsRepo;
         private readonly IEmailService _emailService;
         private readonly UserStatisticService _statService;
 
-        public ClaimController(IClaimsRepository claimsRepo, IEmailService emailService, UserStatisticService statService)
+        public RequestController(IRequestRepository requestsRepo, IEmailService emailService, UserStatisticService statService)
         {
-            _claimsRepo = claimsRepo;
+            _requestsRepo = requestsRepo;
             _emailService = emailService;
             _statService = statService;
         }
@@ -32,50 +32,50 @@ namespace CentWorkTimeTracker.Controllers
                 return Unauthorized();
             }
             int userId = HttpContext.Session.GetInt32("userId").Value;
-            var claims = _claimsRepo.GetAllClaimsByUserId(userId);
-            if (claims.Count == 0)
+            var requests = _requestsRepo.GetAllRequestsByUserId(userId);
+            if (requests.Count == 0)
             {
                 return NoContent();
             }
-            return Ok(claims);
+            return Ok(requests);
         }
 
         [HttpGet("{id}")]
         public async Task<ActionResult> Get(int id)
         {
-            var claim = await _claimsRepo.GetClaimById(id);
-            return Ok(claim);
+            var request = await _requestsRepo.GetRequestById(id);
+            return Ok(request);
         }
 
         [HttpGet("user/{id}")]
         public ActionResult GetByUserId(int id)
         {
-            var claims = _claimsRepo.GetAllClaimsByUserId(id);
-            return Ok(claims);
+            var request = _requestsRepo.GetAllRequestsByUserId(id);
+            return Ok(request);
         }
 
         [HttpGet]
         [Route("all")]
         public ActionResult GetAll()
         {
-            var claims = _claimsRepo.GetAllInProgressClaim();
-            return Ok(claims);
+            var requests = _requestsRepo.GetAllInProgressRequests();
+            return Ok(requests);
         }
 
         [HttpGet]
         [Route("all/rejected")]
         public ActionResult GetRejected()
         {
-            var claims = _claimsRepo.GetAllRejectedClaim();
-            return Ok(claims);
+            var requests = _requestsRepo.GetAllRejectedRequests();
+            return Ok(requests);
         }
 
         [HttpGet]
         [Route("all/approved")]
         public ActionResult GetApproved()
         {
-            var claims = _claimsRepo.GetAllApprovedClaim();
-            return Ok(claims);
+            var requests = _requestsRepo.GetAllApprovedRequests();
+            return Ok(requests);
         }
 
         [HttpPost]
@@ -94,7 +94,7 @@ namespace CentWorkTimeTracker.Controllers
                 DateBegin = model.DateBegin,
                 DateEnd = model.DateEnd
             };
-            var added = await _claimsRepo.AddClaim(vacation);
+            var added = await _requestsRepo.AddRequest(vacation);
             _emailService.sendMessageToManager(added);
             return Ok(added);
         }
@@ -111,7 +111,7 @@ namespace CentWorkTimeTracker.Controllers
                 DateEnd = model.DateEnd,
                 Description = model.Description
             };
-            var added = await _claimsRepo.AddClaim(unpaidedVacation);
+            var added = await _requestsRepo.AddRequest(unpaidedVacation);
             _emailService.sendMessageToManager(added);
             return Ok(added);
         }
@@ -134,7 +134,7 @@ namespace CentWorkTimeTracker.Controllers
                 DateEnd = model.DateEnd,
                 DocNumber = model.DocNumber
             };
-            var added = await _claimsRepo.AddClaim(sick);
+            var added = await _requestsRepo.AddRequest(sick);
             _emailService.sendMessageToManager(added);
             return Ok(added);
         }
@@ -160,7 +160,7 @@ namespace CentWorkTimeTracker.Controllers
                 DateEnd = model.DateEnd,
                 Description = model.Description
             };
-            var added = await _claimsRepo.AddClaim(sickDays);
+            var added = await _requestsRepo.AddRequest(sickDays);
             _emailService.sendMessageToManager(added);
             return Ok(added);
         }
@@ -189,7 +189,7 @@ namespace CentWorkTimeTracker.Controllers
                 DayTo = model.DayTo.Date,
                 Description = model.Description
             };
-            var added = await _claimsRepo.AddClaim(transfer);
+            var added = await _requestsRepo.AddRequest(transfer);
             _emailService.sendMessageToManager(added);
             return Ok(added);
         }
@@ -212,35 +212,35 @@ namespace CentWorkTimeTracker.Controllers
                 UserId = userId,
                 Date = model.Date.Date
             };
-            var added = await _claimsRepo.AddClaim(wfh);
+            var added = await _requestsRepo.AddRequest(wfh);
             _emailService.sendMessageToManager(added);
             return Ok(added);
         }
 
         [HttpGet("approve/{id}")]
         //todo добавить проверку на тип пользователя
-        public async Task<ActionResult> ApproveClaim(int id)
+        public async Task<ActionResult> ApproveRequest(int id)
         {
-            var claim = await _claimsRepo.SetClaimStatus(id, ClaimStatus.Approved);
-            if (claim == null)
+            var request = await _requestsRepo.SetRequestStatus(id, RequestStatus.Approved);
+            if (request == null)
             {
                 return NotFound();
             }
-            _emailService.sendMessageToUser(claim);
-            return Ok(claim);
+            _emailService.sendMessageToUser(request);
+            return Ok(request);
         }
 
         [HttpGet("reject/{id}")]
         //todo добавить проверку на тип пользователя
-        public async Task<ActionResult> RejectClaim(int id)
+        public async Task<ActionResult> RejectRequest(int id)
         {
-            var claim = await _claimsRepo.SetClaimStatus(id, ClaimStatus.Rejected);
-            if (claim == null)
+            var request = await _requestsRepo.SetRequestStatus(id, RequestStatus.Rejected);
+            if (request == null)
             {
                 return NotFound();
             }
-            _emailService.sendMessageToUser(claim);
-            return Ok(claim);
+            _emailService.sendMessageToUser(request);
+            return Ok(request);
         }
     }
 }

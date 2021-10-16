@@ -7,7 +7,7 @@ using System.Threading.Tasks;
 namespace CentWorkTimeTracker.Models
 {
     // Модель отпуска 25 дней в год
-    public class Vacation : Claim
+    public class Vacation : Request
     {
         [Required]
         public DateTime DateBegin { get; set; }

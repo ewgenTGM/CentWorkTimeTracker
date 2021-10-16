@@ -27,6 +27,6 @@ namespace CentWorkTimeTracker.Models
         public UserTypes UserType { get; set; } = UserTypes.User;
 
         [JsonIgnore]
-        public List<Claim> Claims { get; set; }
+        public List<Request> Requests { get; set; }
     }
 }

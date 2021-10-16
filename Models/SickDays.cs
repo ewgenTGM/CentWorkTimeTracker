@@ -7,7 +7,7 @@ using System.Threading.Tasks;
 namespace CentWorkTimeTracker.Models
 {
     //Модель больничного без справки
-    public class SickDays : Claim
+    public class SickDays : Request
     {
         public DateTime DateBegin { get; set; }
 

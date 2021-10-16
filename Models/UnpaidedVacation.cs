@@ -6,7 +6,7 @@ using System.Threading.Tasks;
 
 namespace CentWorkTimeTracker.Models
 {
-    public class UnpaidedVacation : Claim
+    public class UnpaidedVacation : Request
     {
         public DateTime DateBegin { get; set; }
 

@@ -9,9 +9,9 @@ namespace CentWorkTimeTracker.Services
 {
     public interface IEmailService
     {
-        bool sendMessageToManager<T>(T claim) where T : Claim;
+        bool sendMessageToManager<T>(T request) where T : Request;
 
-        bool sendMessageToUser<T>(T claim) where T : Claim;
+        bool sendMessageToUser<T>(T request) where T : Request;
 
         bool sendRegisterEmail(User user);
     }

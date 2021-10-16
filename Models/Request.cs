@@ -4,14 +4,14 @@ using System.ComponentModel.DataAnnotations.Schema;
 
 namespace CentWorkTimeTracker.Models
 {
-    public enum ClaimStatus
+    public enum RequestStatus
     {
         Approved,
         Rejected,
         InProgress
     }
 
-    public abstract class Claim
+    public abstract class Request
     {
         [Key]
         public int Id { get; set; }
@@ -23,18 +23,18 @@ namespace CentWorkTimeTracker.Models
 
         public User User { get; set; }
 
-        public ClaimStatus ClaimStatus { get; private set; } = ClaimStatus.InProgress;
+        public RequestStatus RequestStatus { get; private set; } = RequestStatus.InProgress;
 
         public abstract int GetDayCount();
 
         public void Approve()
         {
-            ClaimStatus = ClaimStatus.Approved;
+            RequestStatus = RequestStatus.Approved;
         }
 
         public void Reject()
         {
-            ClaimStatus = ClaimStatus.Rejected;
+            RequestStatus = RequestStatus.Rejected;
         }
     }
 }
