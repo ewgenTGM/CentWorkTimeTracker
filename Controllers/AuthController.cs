@@ -1,10 +1,10 @@
 ﻿using AutoMapper;
-using CentWorkTimeTracker.Dtos;
 using CentWorkTimeTracker.Helpers;
 using CentWorkTimeTracker.Models;
 using CentWorkTimeTracker.Services;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.AspNetCore.Identity;
 using System;
 using System.Collections.Generic;
 using System.Diagnostics;
@@ -17,50 +17,56 @@ namespace CentWorkTimeTracker.Controllers
     [Route("/api/[controller]")]
     public class AuthController : Controller
     {
-        private readonly IUserRepository _userRepo;
         private readonly IEmailService _emailService;
+        private readonly UserManager<AppUser> _userManager;
+        private readonly SignInManager<AppUser> _signInManager;
 
-        public AuthController(IUserRepository userRepository, IEmailService emailService)
+        public AuthController(IEmailService emailService, UserManager<AppUser> userManager, SignInManager<AppUser> signInManager)
         {
-            _userRepo = userRepository;
             _emailService = emailService;
+            _userManager = userManager;
+            _signInManager = signInManager;
+
         }
 
         [HttpGet]
         [Route("me")]
         public async Task<ActionResult> Get()
         {
-            if (!HttpContext.Session.Keys.Contains("userId"))
+            var aaa = _signInManager.Context.User.Identity.IsAuthenticated;
+            if (!aaa)
             {
                 return Unauthorized(new { Message = "You are not authorized" });
             }
-            var user = await _userRepo.GetUserById(HttpContext.Session.GetInt32("userId").Value);
-            return Ok(new { name = user.Name, email = user.Email, userType = user.UserType });
+            return Ok();
         }
 
         [HttpPost]
         [Route("login")]
         public async Task<ActionResult> Login([FromBody] LoginModel loginModel)
         {
-            User user = await _userRepo.GetUserByEmail(loginModel.Email);
-            if (user == null)
+            var candidate = await _userManager.FindByEmailAsync(loginModel.Email);
+
+            if (candidate == null)
             {
                 return BadRequest(new { Message = "Bad login or password" });
             }
-            if (!PasswordHelper.PasswordCompare(loginModel.Password, user.Password))
+            var signInResult = await _signInManager.PasswordSignInAsync(candidate, loginModel.Password, true, false);
+
+            if (!signInResult.Succeeded)
             {
                 return BadRequest(new { Message = "Bad login or password" });
             }
-            HttpContext.Session.SetInt32("userId", user.Id);
-            HttpContext.Session.SetInt32("userRole", (int)user.UserType);
-            return Ok(new { name = user.Name, email = user.Email, userType = user.UserType });
+            var aaa = HttpContext.User.Identity.Name;
+
+            return Ok(new { Name = candidate.UserName, candidate.Email, userType = "Добавить ROLE" });
         }
 
         [HttpDelete]
         [Route("login")]
-        public ActionResult Login()
-        {
-            HttpContext.Session?.Clear();
+        public async Task<ActionResult> Login()
+        {            
+            await _signInManager.SignOutAsync();
             return Ok("Logout success");
         }
 
@@ -69,23 +75,24 @@ namespace CentWorkTimeTracker.Controllers
         public async Task<ActionResult> Register([FromBody] RegisterModel registerModel)
         {
 
-            if (!registerModel.Email.EndsWith("@centoria.io"))
+            if (!registerModel.Email.EndsWith("@centaurea.io"))
             {
-                return BadRequest(new {Message = "Email address must be in @centoria.io domain."});
+                return BadRequest(new { Message = "Email address must be in @centoria.io domain." });
             }
-            var candidate = await _userRepo.GetUserByEmail(registerModel.Email);
+            var candidate = await _userManager.FindByEmailAsync(registerModel.Email);
             if (candidate != null)
             {
                 return BadRequest(new { Message = "User allready exist" });
             }
-            var user = await _userRepo.AddUser(registerModel);
+            var user = new AppUser() { Email = registerModel.Email, UserName = registerModel.Name };
+            var result = await _userManager.CreateAsync(user, registerModel.Password);
 
-            if (user == null)
+            if (!result.Succeeded)
             {
-                return BadRequest(new { Message = "Something went wrong((" });
+                return BadRequest(result.Errors);
             }
             _emailService.sendRegisterEmail(user);
-            return Ok(new { name = user.Name, email = user.Email, userType = user.UserType });
+            return Ok(user);
         }
     }
 }

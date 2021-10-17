@@ -3,6 +3,7 @@ using CentWorkTimeTracker.Models;
 using CentWorkTimeTracker.Services;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
+using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
@@ -30,12 +31,23 @@ namespace CentWorkTimeTracker
             string dbConnection = Configuration.GetConnectionString("TrackerConnection");
             services.AddDbContext<AppDbContext>(opt => opt.UseSqlServer(dbConnection));
             services.AddCors();
+            services.AddIdentity<AppUser, IdentityRole>(opt =>
+            {
+                opt.Password.RequiredLength = 8;
+                opt.Password.RequireDigit = false;
+                opt.Password.RequireNonAlphanumeric = false;
+                opt.Password.RequireLowercase = false;
+                opt.Password.RequireUppercase = false;
+                opt.User.RequireUniqueEmail = true;
+            })
+                .AddEntityFrameworkStores<AppDbContext>()
+                .AddDefaultTokenProviders();
             services.AddDistributedMemoryCache();
             services.AddSession();
             services.AddTransient<IEmailService, FakeEmailService>();
-            services.AddTransient<UserStatisticService>();
-            services.AddTransient<IUserRepository, UserDbRepository>();
-            services.AddTransient<IRequestRepository, RequestDbRepository>();
+            //services.AddTransient<UserStatisticService>();
+            //services.AddTransient<IUserRepository, UserDbRepository>();
+            //services.AddTransient<IRequestRepository, RequestDbRepository>();
             services.AddControllers()
                 .AddNewtonsoftJson(opt => opt.SerializerSettings.ReferenceLoopHandling = Newtonsoft.Json.ReferenceLoopHandling.Ignore);
         }
@@ -51,10 +63,12 @@ namespace CentWorkTimeTracker
             .AllowAnyMethod()
             .AllowAnyHeader()
             .AllowCredentials());
+            app.UseAuthentication();
             app.UseRouting();
-            app.UseSession();
+            app.UseAuthorization();
+            //app.UseSession();
             //app.UseMiddleware<ClaimRouteProtectionMiddleware>();
-            app.UseMiddleware<ManagerAccessMiddleware>();
+            //app.UseMiddleware<ManagerAccessMiddleware>();
             app.UseEndpoints(endpoints =>
             {
                 endpoints.MapControllers();

@@ -1,5 +1,4 @@
-﻿using CentWorkTimeTracker.Dtos;
-using CentWorkTimeTracker.Models;
+﻿using CentWorkTimeTracker.Models;
 using System;
 using System.Collections.Generic;
 using System.Linq;

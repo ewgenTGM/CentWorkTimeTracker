@@ -9,15 +9,9 @@ namespace CentWorkTimeTracker.Services
 {
     public class FakeEmailService : IEmailService
     {
-        private IUserRepository _userRepo;
-
-        public FakeEmailService(IUserRepository userRepository)
-        {
-            _userRepo = userRepository;
-        }
 
         public bool sendMessageToManager<T>(T request) where T : Request
-        {            
+        {
             Console.WriteLine($"Send mail to manager {request.User.Name} <{request.User.Email}>");
             Console.WriteLine(request.ToString());
             return true;
@@ -30,9 +24,9 @@ namespace CentWorkTimeTracker.Services
             return true;
         }
 
-        public bool sendRegisterEmail(User user)
+        public bool sendRegisterEmail(AppUser user)
         {
-            Console.WriteLine($"Send mail to user {user.Name} <{user.Email}>");
+            Console.WriteLine($"Send mail to user {user.UserName} <{user.Email}>");
             return true;
         }
     }

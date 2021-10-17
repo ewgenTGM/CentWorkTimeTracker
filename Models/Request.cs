@@ -14,14 +14,15 @@ namespace CentWorkTimeTracker.Models
     public abstract class Request
     {
         [Key]
-        public int Id { get; set; }
+        public Guid Id { get; set; }
 
         public string Discriminator { get; set; }
 
         [Required]
-        public int UserId { get; set; }
+        public string UserId { get; set; }
 
         public User User { get; set; }
+        public AppUser AppUser { get; set; }
 
         public RequestStatus RequestStatus { get; private set; } = RequestStatus.InProgress;
 

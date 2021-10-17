@@ -13,6 +13,6 @@ namespace CentWorkTimeTracker.Services
 
         bool sendMessageToUser<T>(T request) where T : Request;
 
-        bool sendRegisterEmail(User user);
+        bool sendRegisterEmail(AppUser user);
     }
 }
