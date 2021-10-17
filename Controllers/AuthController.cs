@@ -69,7 +69,7 @@ namespace CentWorkTimeTracker.Controllers
         public async Task<ActionResult> Register([FromBody] RegisterModel registerModel)
         {
 
-            if (!registerModel.Email.EndsWith("@centoria.io"))
+            if (!registerModel.Email.EndsWith("@centaurea.io"))
             {
                 return BadRequest(new {Message = "Email address must be in @centoria.io domain."});
             }

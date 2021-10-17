@@ -1,4 +1,5 @@
 ﻿using CentWorkTimeTracker.Services;
+using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using System;
 using System.Collections.Generic;
@@ -12,10 +13,12 @@ namespace CentWorkTimeTracker.Controllers
     public class StatController : Controller
     {
         private readonly UserStatisticService _statService;
+        private readonly IUserRepository _userRepository;
 
-        public StatController(UserStatisticService statService)
+        public StatController(UserStatisticService statService, IUserRepository userRepository)
         {
             _statService = statService;
+            _userRepository = userRepository;
         }
 
         [HttpGet("sick/{id}")]
@@ -59,5 +62,42 @@ namespace CentWorkTimeTracker.Controllers
             int count = _statService.GetDaysCountByUserid(id, "WorkFromHome");
             return Ok(count);
         }
+        [HttpGet("{email}")]
+        public async Task<ActionResult> GetStatisticByEmail(string email)
+        {
+            var user = await _userRepository.GetUserByEmail(email);
+            if (user == null)
+            {
+                return BadRequest(new { message = "Use not found" });
+            }
+            var Sicks = _statService.GetDaysCountByUserid(user.Id, "Sick", true);
+            var SickDays = _statService.GetDaysCountByUserid(user.Id, "SickDays", true);
+            var SickDaysRemaining = 5 -_statService.GetDaysCountByUserid(user.Id, "Sick", true);
+            var Vacations = _statService.GetDaysCountByUserid(user.Id, "Vacation", true);
+            var VacationsRemaining = 25 - _statService.GetDaysCountByUserid(user.Id, "Vacation", true);
+            var UnpaidedVacations = _statService.GetDaysCountByUserid(user.Id, "UnpaidedVacation", true);
+            var Transfers = _statService.GetDaysCountByUserid(user.Id, "Transfer", true);
+            return Ok(new {Sicks, SickDays, SickDaysRemaining, Vacations, VacationsRemaining, UnpaidedVacations, Transfers});
+        }
+
+        [HttpGet]
+        public async Task<ActionResult> GetStatistic()
+        {
+            int userId = HttpContext.Session.GetInt32("userId").Value;
+            var user = await _userRepository.GetUserById(userId);
+            if (user == null)
+            {
+                return BadRequest(new { message = "Use not found" });
+            }
+            var Sicks = _statService.GetDaysCountByUserid(user.Id, "Sick", true);
+            var SickDays = _statService.GetDaysCountByUserid(user.Id, "SickDays", true);
+            var SickDaysRemaining = 5 - _statService.GetDaysCountByUserid(user.Id, "Sick", true);
+            var Vacations = _statService.GetDaysCountByUserid(user.Id, "Vacation", true);
+            var VacationsRemaining = 25 - _statService.GetDaysCountByUserid(user.Id, "Vacation", true);
+            var UnpaidedVacations = _statService.GetDaysCountByUserid(user.Id, "UnpaidedVacation", true);
+            var Transfers = _statService.GetDaysCountByUserid(user.Id, "Transfer", true);
+            return Ok(new { Sicks, SickDays, SickDaysRemaining, Vacations, VacationsRemaining, UnpaidedVacations, Transfers });
+        }
+
     }
 }

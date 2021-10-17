@@ -16,12 +16,14 @@ namespace CentWorkTimeTracker.Controllers
         private readonly IRequestRepository _requestsRepo;
         private readonly IEmailService _emailService;
         private readonly UserStatisticService _statService;
+        private readonly IUserRepository _userRepository;
 
-        public RequestController(IRequestRepository requestsRepo, IEmailService emailService, UserStatisticService statService)
+        public RequestController(IRequestRepository requestsRepo, IEmailService emailService, UserStatisticService statService, IUserRepository userRepository)
         {
             _requestsRepo = requestsRepo;
             _emailService = emailService;
             _statService = statService;
+            _userRepository = userRepository;
         }
 
         [HttpGet]
@@ -47,12 +49,19 @@ namespace CentWorkTimeTracker.Controllers
             return Ok(request);
         }
 
-        [HttpGet("user/{id}")]
-        public ActionResult GetByUserId(int id)
+        [HttpGet]
+        [Route("user/{email}")]
+        public async Task<ActionResult> GetByUserEmail(string email)
         {
-            var request = _requestsRepo.GetAllRequestsByUserId(id);
+            var user = await _userRepository.GetUserByEmail(email);
+            if (user == null)
+            {
+                return NotFound(new { Message = $"User with ${email} not found." });
+            }
+            var request = _requestsRepo.GetAllRequestsByUserId(user.Id);
             return Ok(request);
         }
+
 
         [HttpGet]
         [Route("all")]
@@ -83,6 +92,12 @@ namespace CentWorkTimeTracker.Controllers
         public async Task<ActionResult> AddVacation([FromBody] AddVacationModel model)
         {
             int userId = HttpContext.Session.GetInt32("userId").Value;
+
+            if (model.DateBegin.Date > model.DateEnd.Date)
+            {
+                return BadRequest(new { Message = "День начала не может быть позже дня окончания." });
+            }
+
             int lastDays = 25 - _statService.GetDaysCountByUserid(userId, "Vacation", true);
             if (lastDays < (model.DateEnd - model.DateBegin).Days)
             {
@@ -104,6 +119,12 @@ namespace CentWorkTimeTracker.Controllers
         public async Task<ActionResult> AddUnpaidedVacation([FromBody] AddUnpaidedVacationModel model)
         {
             int userId = HttpContext.Session.GetInt32("userId").Value;
+
+            if (model.DateBegin.Date > model.DateEnd.Date)
+            {
+                return BadRequest(new { Message = "День начала не может быть позже дня окончания." });
+            }
+
             UnpaidedVacation unpaidedVacation = new UnpaidedVacation()
             {
                 UserId = userId,
@@ -143,9 +164,9 @@ namespace CentWorkTimeTracker.Controllers
         [Route("add/sickdays")]
         public async Task<ActionResult> AddSickDays([FromBody] AddSickDaysModel model)
         {
-            int userId = HttpContext.Session.GetInt32("userId").Value;            
+            int userId = HttpContext.Session.GetInt32("userId").Value;
             int lastDays = 5 - _statService.GetDaysCountByUserid(userId, "SickDays", true);
-            if (lastDays < (model.DateEnd-model.DateBegin).Days)
+            if (lastDays < (model.DateEnd - model.DateBegin).Days)
             {
                 return BadRequest(new { Message = $"У вас нет столько SickDays. У вас осталось {lastDays} дней." });
             }

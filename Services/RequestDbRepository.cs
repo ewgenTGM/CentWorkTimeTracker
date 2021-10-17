@@ -93,8 +93,9 @@ namespace CentWorkTimeTracker.Services
 
         List<Request> IRequestRepository.GetAllRequestsByUserId(int id)
         {
-            var claims = _db.Requests.Where(c => c.UserId == id).Include(c => c.User).ToList();
-            return claims;
+            var requests = _db.Requests.Where(c => c.UserId == id).Include(c => c.User).ToList();
+            return requests;
         }
+
     }
 }
